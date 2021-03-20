@@ -9,12 +9,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.githubuserapp.R
+import com.example.githubuserapp.databinding.ItemRowFollowingInDetailBinding
 import com.example.githubuserapp.model.User
 import com.example.githubuserapp.databinding.ItemRowGithubBinding
 import com.example.githubuserapp.ui.HomeFragment
 
 
-class ListUserAdapter(): RecyclerView.Adapter<ListUserAdapter.ListViewHolder>() {
+class ListFollowingAdapter(): RecyclerView.Adapter<ListFollowingAdapter.ListViewHolder>() {
 
     private val mData = ArrayList<User>()
 
@@ -35,7 +36,7 @@ class ListUserAdapter(): RecyclerView.Adapter<ListUserAdapter.ListViewHolder>() 
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ListViewHolder {
-        val binding =  LayoutInflater.from(viewGroup.context).inflate(R.layout.item_row_github, viewGroup, false)
+        val binding =  LayoutInflater.from(viewGroup.context).inflate(R.layout.item_row_following_in_detail, viewGroup, false)
         return ListViewHolder(binding)
     }
 
@@ -48,7 +49,7 @@ class ListUserAdapter(): RecyclerView.Adapter<ListUserAdapter.ListViewHolder>() 
     override fun getItemCount(): Int = mData.size
 
     inner class ListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
-        private val binding = ItemRowGithubBinding.bind(itemView)
+        private val binding = ItemRowFollowingInDetailBinding.bind(itemView)
         fun bind(userItem: User) {
             with(itemView){
                 binding.tvItemName.text = userItem.name

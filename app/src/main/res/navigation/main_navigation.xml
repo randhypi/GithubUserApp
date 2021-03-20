@@ -9,5 +9,34 @@
         android:id="@+id/homeFragment"
         android:name="com.example.githubuserapp.ui.HomeFragment"
         android:label="fragment_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_homeFragment_to_detailFragment"
+            app:destination="@id/detailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/detailFragment"
+        android:name="com.example.githubuserapp.ui.DetailFragment"
+        android:label="detail_fragment"
+        tools:layout="@layout/detail_fragment" >
+        <action
+            android:id="@+id/action_detailFragment_to_homeFragment"
+            app:popUpTo="@id/homeFragment" />
+        <argument
+            android:name="name"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="default name" />
+    </fragment>
+    <fragment
+        android:id="@+id/followingInDetailFragment"
+        android:name="com.example.githubuserapp.ui.FollowingInDetailFragment"
+        android:label="fragment_following_in_detail"
+        tools:layout="@layout/fragment_following_in_detail" >
+        <argument
+            android:name="username"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="default username" />
+    </fragment>
 </navigation>
