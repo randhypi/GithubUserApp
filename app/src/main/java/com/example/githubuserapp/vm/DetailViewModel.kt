@@ -19,12 +19,62 @@ class DetailViewModel : ViewModel() {
 
     }
 
+    val followingDetail = MutableLiveData<ArrayList<User>>()
     val followersDetail = MutableLiveData<ArrayList<User>>()
     val userDetail = MutableLiveData<ArrayList<User>>()
 
+    fun setFollowing(username: String) {
+
+        val followingsUser = ArrayList<User>()
+
+        val asyncClient = AsyncHttpClient()
+        asyncClient.addHeader("Authorization", "fecdd17f1dd5ed66cf5d9e60e4e3a047d72d45dd")
+        asyncClient.addHeader("User-Agent", "request")
+
+        asyncClient.get(
+            "https://api.github.com/users/$username/following",
+            object : AsyncHttpResponseHandler() {
+                override fun onSuccess(
+                    statusCode: Int,
+                    headers: Array<out Header>?,
+                    responseBody: ByteArray
+                ) {
+                    val result = String(responseBody)
+                    Log.d(MainViewModel.TAG, result)
+                    try {
+                        val response = JSONArray(result)
+                        for (i in 0 until response.length()) {
+                            response.let {
+                                val name = it.getJSONObject(i).getString("login")
+                                val ava = it.getJSONObject(i).getString("avatar_url")
+                                val user = User(name = name, avatar = ava)
+                                followingsUser.add(user)
+                            }
+                        }
+                        followingDetail.postValue(followingsUser)
+                    } catch (e: Exception) {
+                        Log.d(MainViewModel.TAG, e.toString())
+                    }
+                }
+
+                override fun onFailure(
+                    statusCode: Int,
+                    headers: Array<out Header>?,
+                    responseBody: ByteArray?,
+                    error: Throwable?
+                ) {
+                    Log.d("onFailure", error!!.message.toString())
+                }
+
+            })
+    }
+
+    fun getFollowing(): LiveData<ArrayList<User>> {
+        return followingDetail
+    }
 
 
-    fun setFollowers(username: String, status: String) {
+    fun setFollowers(username: String) {
 
         val followersUser = ArrayList<User>()
 
@@ -33,19 +83,19 @@ class DetailViewModel : ViewModel() {
         asyncClient.addHeader("User-Agent", "request")
 
         asyncClient.get(
-            "https://api.github.com/users/$username/$status",
+            "https://api.github.com/users/$username/followers",
             object : AsyncHttpResponseHandler() {
                 override fun onSuccess(
                     statusCode: Int,
                     headers: Array<out Header>?,
-                    responseBody: ByteArray?
+                    responseBody: ByteArray
                 ) {
-                    val result = if (responseBody != null) String(responseBody) else null
+                    val result =String(responseBody)
                     Log.d(MainViewModel.TAG, result)
                     try {
                         val response = JSONArray(result)
                         for (i in 0 until response.length()) {
-                            response?.let {
+                            response.let {
                                 val name = it.getJSONObject(i).getString("login")
                                 val ava = it.getJSONObject(i).getString("avatar_url")
                                 val user = User(name = name, avatar = ava)
@@ -89,19 +139,19 @@ class DetailViewModel : ViewModel() {
                 override fun onSuccess(
                     statusCode: Int,
                     headers: Array<out Header>?,
-                    responseBody: ByteArray?
+                    responseBody: ByteArray
                 ) {
-                    val result = if (responseBody != null) String(responseBody) else null
-                    Log.d(TAG, result.toString())
+                    val result = String(responseBody)
+                    Log.d(TAG, result)
                     try {
                         val response = JSONObject(result)
 
                         val name = response.getString("name")
-                        val username = response.getString("login")
+                        val username1 = response.getString("login")
                         val avatar = response.getString("avatar_url")
 
 
-                        val user = User(name = name, username = username, avatar = avatar)
+                        val user = User(name = name, username = username1, avatar = avatar)
 
                         detailUser.add(user)
                         userDetail.postValue(detailUser)

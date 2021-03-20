@@ -25,16 +25,6 @@ class ListFollowingAdapter(): RecyclerView.Adapter<ListFollowingAdapter.ListView
         notifyDataSetChanged()
     }
 
-    private lateinit var onItemClickCallback: OnItemClickCallback
-
-    interface OnItemClickCallback {
-        fun onItemClicked(data: User)
-    }
-
-    fun setOnItemClickCallback(onItemClickCallback: OnItemClickCallback) {
-        this.onItemClickCallback = onItemClickCallback
-    }
-
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ListViewHolder {
         val binding =  LayoutInflater.from(viewGroup.context).inflate(R.layout.item_row_following_in_detail, viewGroup, false)
         return ListViewHolder(binding)
@@ -58,8 +48,6 @@ class ListFollowingAdapter(): RecyclerView.Adapter<ListFollowingAdapter.ListView
                     .load(userItem.avatar)
                     .apply(RequestOptions().override(55,55))
                     .into(binding.imgItemPhoto)
-
-                itemView.setOnClickListener { onItemClickCallback?.onItemClicked(userItem) }
             }
         }
     }

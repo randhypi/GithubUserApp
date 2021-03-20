@@ -14,6 +14,10 @@
     <string name="btn_search">Search</string>
     <string name="tab_text_1">Follower</string>
     <string name="tab_text_2">Following</string>
+    <string name="notFollowers">Tidak Mempunyai Followers</string>
+    <string name="notFollowing">Tidak Mempunyai Following</string>
+    <string name="detail">Detail</string>
+    <string name="nama">Nama</string>
 
 </resources>
 

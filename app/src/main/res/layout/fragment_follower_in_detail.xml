@@ -5,6 +5,16 @@
     android:layout_height="match_parent"
     tools:context=".ui.FollowerInDetailFragment">
 
+    <TextView
+        android:id="@+id/tv_notFollower"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="@string/notFollowers"
+        android:textColor="#000000"
+        android:textSize="36sp"
+        android:textStyle="bold"
+        android:visibility="gone" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvFollowerInDetail"
         android:layout_width="match_parent"

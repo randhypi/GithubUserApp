@@ -38,7 +38,7 @@ class HomeFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val view = binding.root
@@ -58,8 +58,7 @@ class HomeFragment : Fragment() {
             showLoading(true)
             mainViewModel.setUserAll(user)
         }
-
-
+        showLoading(true)
         showRecyler()
     }
 
@@ -94,19 +93,21 @@ class HomeFragment : Fragment() {
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
                 if (p0.isNullOrEmpty()) {
                     mainViewModel.setUser()
-                } else {
-
                 }
             }
+
             override fun afterTextChanged(p0: Editable?) {}
 
         })
 
-        mainViewModel.getUserAll().observe(viewLifecycleOwner, { weatherItems ->
-            if (weatherItems != null) {
-                listUserAdapter.setData(weatherItems)
-                Log.d(TAG, weatherItems.get(0).name)
+        mainViewModel.getUserAll().observe(viewLifecycleOwner, { items ->
+            if (items != null) {
+                listUserAdapter.setData(items)
                 showLoading(false)
+            } else {
+                Toast.makeText(context, "Not Found", Toast.LENGTH_LONG).show()
+                mainViewModel.setUser()
+
             }
         })
 
@@ -117,7 +118,7 @@ class HomeFragment : Fragment() {
         })
     }
 
-    private fun showSelectedUser(user: User,view: View) {
+    private fun showSelectedUser(user: User, view: View) {
         Toast.makeText(context, "Kamu memilih ${user.name}", Toast.LENGTH_SHORT).show()
 
         detailViewModel = DetailViewModel()

@@ -58,7 +58,7 @@ class ListUserAdapter(): RecyclerView.Adapter<ListUserAdapter.ListViewHolder>() 
                     .apply(RequestOptions().override(55,55))
                     .into(binding.imgItemPhoto)
 
-                itemView.setOnClickListener { onItemClickCallback?.onItemClicked(userItem) }
+                itemView.setOnClickListener { onItemClickCallback.onItemClicked(userItem) }
             }
         }
     }
