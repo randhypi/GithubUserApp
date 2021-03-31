@@ -1,0 +1,28 @@
+package com.example.githubuserapp
+
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.view.View
+import com.bumptech.glide.Glide
+import com.example.githubuserapp.databinding.ActivityDetailBinding
+import com.example.githubuserapp.databinding.ActivityMainBinding
+
+class Detail : AppCompatActivity() {
+    private lateinit var binding: ActivityDetailBinding
+
+    companion object {
+        const val EXTRA_USER = "extra_user"
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivityDetailBinding.inflate().inflate(layoutInflater)
+        setContentView(binding.root)
+
+        val user = intent.getParcelableArrayListExtra<User>(EXTRA_USER) as User
+
+        Glide.with(this)
+
+
+    }
+}

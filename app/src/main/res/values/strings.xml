@@ -18,6 +18,10 @@
     <string name="notFollowing">Tidak Mempunyai Following</string>
     <string name="detail">Detail</string>
     <string name="nama">Nama</string>
+    <string name="Back">back</string>
+    <string name="image_view_splash_screen">Image View Splash Screen</string>
+    <string name="search">search</string>
+    <string name="favorit">Favorit</string>
 
 </resources>
 
