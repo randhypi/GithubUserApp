@@ -8,20 +8,19 @@ import com.randhypi.githubuserapp.database.UserTable.Companion.TABLE_NAME
 
 
 @Database(entities = arrayOf(UserTable::class), version = 1)
-abstract class AppDatabase : RoomDatabase() {
+abstract class AppDatabase() : RoomDatabase() {
 
     companion object{
-        private lateinit var INSTANCE: AppDatabase
+        private var INSTANCE: AppDatabase? = null
 
-        fun getInstance(context: Context?): AppDatabase? {
-            if (INSTANCE == null) {
-                INSTANCE = Room
-                    .databaseBuilder(context!!, AppDatabase::class.java, TABLE_NAME)
-                    .build()
+        fun getInstance(context: Context): AppDatabase =
+            INSTANCE ?: synchronized(this) {
+                INSTANCE ?: Room.databaseBuilder(context, AppDatabase::class.java, TABLE_NAME)
+                        .build()
             }
-            return INSTANCE
-        }
     }
+
+
 
     abstract fun getUserDao(): UserDao
 }

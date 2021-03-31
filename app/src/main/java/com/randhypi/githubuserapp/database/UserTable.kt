@@ -12,11 +12,12 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 @Entity(tableName = "userTable")
 data class UserTable(
-    @PrimaryKey(autoGenerate = true) var id: Int? = 0,
     @ColumnInfo(name = "username") var username: String? = "",
     @ColumnInfo(name = "name") var name: String? = "",
-    @ColumnInfo(name = "avatar") var  avatar: String? = ""
+    @ColumnInfo(name = "avatar") var avatar: String? = "",
+    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") var id: Int
 ) : Parcelable {
+
 
     companion object{
         const val TABLE_NAME = "userTable"
@@ -34,10 +35,8 @@ data class UserTable(
             .build()
 
         fun fromContentValues(contentValues: ContentValues): UserTable? {
-            val userTable = UserTable()
-
+            val userTable = UserTable(id = 0)
             when{
-                contentValues.containsKey(ID) -> userTable.id =  contentValues.getAsInteger(ID)
                 contentValues.containsKey(USERNAME) ->  userTable.username = contentValues.getAsString(USERNAME)
                 contentValues.containsKey(NAME) ->  userTable.name = contentValues.getAsString(NAME)
                 contentValues.containsKey(AVATAR) ->  userTable.avatar =  contentValues.getAsString(AVATAR)

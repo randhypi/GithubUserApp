@@ -22,7 +22,7 @@ class DatabaseViewModel(private val mContext: Context): ViewModel() {
             val cursor = contentResolver.query(UserTable.CONTENT_URI, null, null, null, null)
             if (cursor != null && cursor.count > 0) {
                 while (cursor.moveToNext()) {
-                    val userTable = UserTable()
+                    val userTable = UserTable(id = 0)
                     userTable.id = cursor.getInt(0)
                     userTable.username = cursor.getString(1)
                     userTable.name = cursor.getString(2)

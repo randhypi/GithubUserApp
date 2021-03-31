@@ -35,8 +35,8 @@ class UserProvider : ContentProvider() {
 
 
     override fun onCreate(): Boolean {
-        userDao = AppDatabase?.getInstance(context)?.getUserDao()!!
-        return false;
+        userDao = context?.let { AppDatabase?.getInstance(it)?.getUserDao() }!!
+        return true;
     }
 
 
@@ -68,8 +68,7 @@ class UserProvider : ContentProvider() {
                 if (context != null) {
                     val id: Long = userDao.insert(values?.let { UserTable.fromContentValues(it) })
                     if (id != 0L) {
-                        context!!.contentResolver
-                            .notifyChange(uri, null)
+                        context!!.contentResolver.notifyChange(uri, null)
                         return ContentUris.withAppendedId(uri, id)
                     }
                 }

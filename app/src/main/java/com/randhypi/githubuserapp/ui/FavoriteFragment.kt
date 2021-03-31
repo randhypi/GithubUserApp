@@ -1,11 +1,7 @@
 package com.randhypi.githubuserapp.ui
 
 
-import android.database.ContentObserver
-import android.media.tv.TvContract.Channels.CONTENT_URI
 import android.os.Bundle
-import android.os.Handler
-import android.os.HandlerThread
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -66,18 +62,18 @@ class FavoriteFragment : Fragment() {
 
 
 
-        val handlerThread = HandlerThread("DataObserver")
-        handlerThread.start()
-        val handler = Handler(handlerThread.looper)
-
-        val myObserver = object : ContentObserver(handler) {
-            override fun onChange(self: Boolean) {
-
-            }
-        }
-
-        context?.contentResolver?.registerContentObserver(CONTENT_URI, true, myObserver)
-
+//        val handlerThread = HandlerThread("DataObserver")
+//        handlerThread.start()
+//        val handler = Handler(handlerThread.looper)
+//
+//        val myObserver = object : ContentObserver(handler) {
+//            override fun onChange(self: Boolean) {
+//
+//            }
+//        }
+//
+//        context?.contentResolver?.registerContentObserver(CONTENT_URI, true, myObserver)
+//
 
     }
 
