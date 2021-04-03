@@ -1,10 +1,10 @@
-package com.randhypi.githubuserapp.database
+package com.randhypi.githubuserapp.data
 
 import android.database.Cursor
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-import com.randhypi.githubuserapp.database.UserTable.Companion.TABLE_NAME
+import com.randhypi.githubuserapp.data.UserTable.Companion.TABLE_NAME
 
 @Dao
 interface UserDao {
@@ -14,6 +14,9 @@ interface UserDao {
 
     @Insert
     fun insert(user: UserTable?): Long
+
+    @Query("SELECT COUNT() FROM userTable WHERE id = :id")
+    fun count(id: Long): Cursor
 
     @Query("DELETE FROM $TABLE_NAME WHERE  id = :id")
     fun delete(id: Long): Int

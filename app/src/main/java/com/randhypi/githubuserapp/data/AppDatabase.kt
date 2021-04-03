@@ -1,10 +1,10 @@
-package com.randhypi.githubuserapp.database
+package com.randhypi.githubuserapp.data
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.randhypi.githubuserapp.database.UserTable.Companion.TABLE_NAME
+import com.randhypi.githubuserapp.data.UserTable.Companion.TABLE_NAME
 
 
 @Database(entities = arrayOf(UserTable::class), version = 1)

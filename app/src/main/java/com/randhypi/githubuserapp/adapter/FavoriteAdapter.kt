@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.randhypi.githubuserapp.R
-import com.randhypi.githubuserapp.databinding.ItemRowFollowingInDetailBinding
+import com.randhypi.githubuserapp.databinding.ItemRowFavoriteBinding
 import com.randhypi.githubuserapp.model.User
 
 class FavoriteAdapter(): RecyclerView.Adapter<FavoriteAdapter.ListViewHolder>() {
@@ -18,6 +18,16 @@ class FavoriteAdapter(): RecyclerView.Adapter<FavoriteAdapter.ListViewHolder>() 
         mData.clear()
         mData.addAll(items)
         notifyDataSetChanged()
+    }
+
+    private lateinit var onItemClickCallback: OnItemClickCallback
+
+    interface OnItemClickCallback {
+        fun onItemClicked(data: User)
+    }
+
+    fun setOnItemClickCallback(onItemClickCallback: OnItemClickCallback) {
+        this.onItemClickCallback = onItemClickCallback
     }
 
 
@@ -35,18 +45,21 @@ class FavoriteAdapter(): RecyclerView.Adapter<FavoriteAdapter.ListViewHolder>() 
     override fun getItemCount(): Int = mData.size
 
     inner class ListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
-        private val binding = ItemRowFollowingInDetailBinding.bind(itemView)
+        private val binding = ItemRowFavoriteBinding.bind(itemView)
         fun bind(userItem: User) {
+
             with(itemView){
-                binding.tvItemName.text = userItem.name
+                binding.tvItemName.text = userItem.username
 
                 Glide.with(itemView.context)
                     .load(userItem.avatar)
                     .apply(RequestOptions().override(55,55))
                     .into(binding.imgItemPhoto)
 
-
+                itemView.setOnClickListener { onItemClickCallback.onItemClicked(userItem) }
             }
+
+
         }
     }
 }

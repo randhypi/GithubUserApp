@@ -1,7 +1,9 @@
 package com.randhypi.githubuserapp.ui
 
 
+import android.content.ContentResolver
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -13,6 +15,8 @@ import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
@@ -21,14 +25,28 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.randhypi.githubuserapp.R
 import com.randhypi.githubuserapp.R.string.*
 import com.randhypi.githubuserapp.adapter.SectionsPagerAdapter
+import com.randhypi.githubuserapp.data.UserTable.Companion.CONTENT_URI
 import com.randhypi.githubuserapp.databinding.DetailFragmentBinding
+import com.randhypi.githubuserapp.model.User
+import com.randhypi.githubuserapp.repository.UserRepository
+import com.randhypi.githubuserapp.vm.DatabaseViewModel
+import com.randhypi.githubuserapp.vm.DatabaseViewModelFactory
 import com.randhypi.githubuserapp.vm.DetailViewModel
+import com.randhypi.githubuserapp.vm.MainViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class DetailFragment : Fragment() {
 
     private var _binding: DetailFragmentBinding? = null
     private val binding get() = _binding!!
     private val detailViewModel: DetailViewModel by activityViewModels()
+    private lateinit var contentResolver: ContentResolver
+    private lateinit var viewModelFactory: DatabaseViewModelFactory
+    private lateinit var mainViewModel: MainViewModel
+    private lateinit var uriWithId: Uri
+    private var statusfavorite: Boolean = false
 
     companion object {
         val TAG = DetailFragment::class.java.simpleName
@@ -47,7 +65,6 @@ class DetailFragment : Fragment() {
     ): View {
         _binding = DetailFragmentBinding.inflate(inflater, container, false)
         val view = binding.root
-
         return view
     }
 
@@ -55,11 +72,13 @@ class DetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         showLoading(true)
-        activity?.onBackPressedDispatcher?.addCallback(requireActivity(),object : OnBackPressedCallback(true){
-            override fun handleOnBackPressed() {
-                view.findNavController().navigate(R.id.action_detailFragment_to_homeFragment)
-            }
-        })
+
+        activity?.onBackPressedDispatcher?.addCallback(requireActivity(),
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    view.findNavController().navigate(R.id.action_detailFragment_to_homeFragment)
+                }
+            })
         binding.myToolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_ios_new_24)
         binding.myToolbar.setNavigationOnClickListener {
             view.findNavController().navigate(R.id.action_detailFragment_to_homeFragment)
@@ -68,7 +87,10 @@ class DetailFragment : Fragment() {
         val dataName = DetailFragmentArgs.fromBundle(arguments as Bundle).name
         if (dataName != null) {
             showData(dataName)
+            setStatusFavorite(dataName)
+
         }
+
         val sectionsPagerAdapter = dataName?.let {
             SectionsPagerAdapter(
                 context as FragmentActivity,
@@ -85,14 +107,11 @@ class DetailFragment : Fragment() {
             tab.text = resources.getString((TAB_TITLES[position]))
         }.attach()
 
+
+
         activity?.actionBar?.setDisplayHomeAsUpEnabled(true)
         activity?.actionBar?.title = getString(detail)
-
-
     }
-
-
-
 
     private fun showData(username: String) {
         detailViewModel.setUserDetail(username)
@@ -104,6 +123,7 @@ class DetailFragment : Fragment() {
                     .load(item[0].avatar)
                     .into(binding.imgDetail)
 
+                btnFav(item[0])
                 binding.tvNameDetail.text = item[0].name
                 binding.tvUsernameDetail.text = item[0].username
                 showLoading(false)
@@ -111,6 +131,74 @@ class DetailFragment : Fragment() {
                 Toast.makeText(context, "Data Not Found", Toast.LENGTH_LONG).show()
             }
 
+        })
+    }
+
+    private fun setStatusFavorite(dataName: String) {
+        viewModelFactory = DatabaseViewModelFactory(activity?.application!!)
+        val viewModel = ViewModelProvider(this, viewModelFactory).get(DatabaseViewModel::class.java)
+        viewModel.getUserFavorite.observe(viewLifecycleOwner, { favorite ->
+            val result = favorite.find {
+                it.username == dataName
+            }
+            Log.d(TAG, "Hasil result setstatusfav $result")
+            Log.d(TAG, "$dataName = $result")
+            if (result != null) {
+                detailViewModel.setStateStatusFav(true)
+                Log.d(TAG, "set status favorite $statusfavorite")
+            } else {
+                detailViewModel.setStateStatusFav(false)
+                Log.d(TAG, "set status favorite $statusfavorite")
+            }
+        })
+    }
+
+    private fun btnFav(user: User) {
+        viewModelFactory = DatabaseViewModelFactory(activity?.application!!)
+        val viewModel = ViewModelProvider(this, viewModelFactory).get(DatabaseViewModel::class.java)
+        detailViewModel.stateStatusFav.observe(viewLifecycleOwner, { statusfavorite ->
+            viewModel.getUserFavorite.observe(viewLifecycleOwner, { favorite ->
+                lifecycleScope.launch {
+                    if (statusfavorite == true) {
+                        withContext(Dispatchers.Main) {
+                            binding.btnFav.setImageResource(R.drawable.ic_favorite_24)
+                            binding.btnFav.setOnClickListener {
+                                val result = favorite.find {
+                                    it.username == user.username
+                                }
+                                if (result != null) {
+                                    uriWithId =
+                                        Uri.parse(CONTENT_URI.toString() + "/" + favorite[0].id)
+                                    contentResolver = context?.contentResolver!!
+                                    UserRepository.delUserFav(contentResolver, uriWithId)
+                                }
+
+                                Log.d(
+                                    TAG,
+                                    "button clicked and $statusfavorite delete in id = ${favorite[0].id}"
+                                )
+                                detailViewModel.setStateStatusFav(false)
+
+                            }
+                        }
+                    } else if (statusfavorite == false) {
+                        withContext(Dispatchers.Main) {
+                            binding.btnFav.setImageResource(com.randhypi.githubuserapp.R.drawable.ic_favorite_border_24)
+                            binding.btnFav.setOnClickListener {
+                                contentResolver = context?.contentResolver!!
+                                UserRepository.insertUserFav(
+                                    user,
+                                    requireContext(),
+                                    contentResolver
+                                )
+                                detailViewModel.setStateStatusFav(true)
+                                Log.d(TAG, "button clicked and $statusfavorite insert ")
+
+                            }
+                        }
+                    }
+                }
+            })
         })
     }
 
@@ -123,7 +211,6 @@ class DetailFragment : Fragment() {
             binding.progressBar.visibility = View.GONE
         }
     }
-
 
 
     override fun onDestroy() {

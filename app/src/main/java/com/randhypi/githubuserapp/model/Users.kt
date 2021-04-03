@@ -17,4 +17,3 @@ data class Users(
 	@field:SerializedName("login")
 	var login: String? = null
 ) : Parcelable
-

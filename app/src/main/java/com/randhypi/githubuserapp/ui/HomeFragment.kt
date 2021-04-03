@@ -19,7 +19,6 @@ import com.randhypi.githubuserapp.R
 import com.randhypi.githubuserapp.adapter.ListUserAdapter
 import com.randhypi.githubuserapp.databinding.FragmentHomeBinding
 import com.randhypi.githubuserapp.model.User
-import com.randhypi.githubuserapp.vm.DetailViewModel
 import com.randhypi.githubuserapp.vm.MainViewModel
 
 
@@ -30,7 +29,6 @@ class HomeFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var mainViewModel: MainViewModel
-    private lateinit var detailViewModel: DetailViewModel
     private lateinit var listUserAdapter: ListUserAdapter
 
 
@@ -148,20 +146,18 @@ class HomeFragment : Fragment() {
             override fun onItemClicked(data: User) {
                 view?.let { showSelectedUser(data, it) }
             }
+
         })
     }
 
     private fun showSelectedUser(user: User, view: View) {
         Toast.makeText(context, "Kamu memilih ${user.name}", Toast.LENGTH_SHORT).show()
 
-        detailViewModel = DetailViewModel()
-
         val toDetail = HomeFragmentDirections.actionHomeFragmentToDetailFragment()
         toDetail.name = user.name
 
         view.findNavController().navigate(toDetail)
     }
-
 
     override fun onDestroy() {
         super.onDestroy()

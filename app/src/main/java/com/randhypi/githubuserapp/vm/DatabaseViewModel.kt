@@ -1,50 +1,33 @@
 package com.randhypi.githubuserapp.vm
 
-import android.content.ContentResolver
-import android.content.ContentValues
-import android.content.Context
+import android.app.Application
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.randhypi.githubuserapp.database.UserTable
-import com.randhypi.githubuserapp.database.UserTable.Companion.AVATAR
-import com.randhypi.githubuserapp.database.UserTable.Companion.CONTENT_URI
-import com.randhypi.githubuserapp.database.UserTable.Companion.NAME
-import com.randhypi.githubuserapp.database.UserTable.Companion.USERNAME
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.liveData
+import com.randhypi.githubuserapp.data.UserSourceData
+import com.randhypi.githubuserapp.model.User
+import com.randhypi.githubuserapp.repository.UserRepository
+import kotlinx.coroutines.Dispatchers
 
-class DatabaseViewModel(private val mContext: Context): ViewModel() {
-    private var contentResolver: ContentResolver = mContext.contentResolver
+class DatabaseViewModel(private val context: Application, private val userRepository: UserRepository) :
+    ViewModel() {
 
-    val allUserTable = MutableLiveData<ArrayList<UserTable>>()
 
-    fun setAllUserTable(){
-            val userList = ArrayList<UserTable>()
-            val cursor = contentResolver.query(UserTable.CONTENT_URI, null, null, null, null)
-            if (cursor != null && cursor.count > 0) {
-                while (cursor.moveToNext()) {
-                    val userTable = UserTable(id = 0)
-                    userTable.id = cursor.getInt(0)
-                    userTable.username = cursor.getString(1)
-                    userTable.name = cursor.getString(2)
-                    userTable.avatar = cursor.getString(3)
-
-                    userList.add(userTable)
-                }
-            }
-            allUserTable.postValue(userList)
-    }
-
-    fun getAllUserTable(): LiveData<ArrayList<UserTable>> {
-        return allUserTable
-    }
-
-    fun insertUserTable(userTable: UserTable) {
-        val contentValues = ContentValues()
-        contentValues.put(USERNAME, userTable.username)
-        contentValues.put(NAME, userTable.name)
-        contentValues.put(AVATAR, userTable.avatar)
-        contentResolver.insert(CONTENT_URI, contentValues)
+    val getUserFavorite: LiveData<ArrayList<User>> = liveData {
+        emit(ArrayList<User>(userRepository.getUserFavorite()))
     }
 
 
+}
+
+class DatabaseViewModelFactory(private val application: Application): ViewModelProvider.AndroidViewModelFactory(application){
+    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        return if (modelClass.isAssignableFrom(DatabaseViewModel::class.java)) {
+            val source =
+                UserSourceData(application.contentResolver)
+            DatabaseViewModel(application, UserRepository(source, Dispatchers.IO)) as T
+        } else
+            throw IllegalArgumentException("Unknown ViewModel class")
+    }
 }

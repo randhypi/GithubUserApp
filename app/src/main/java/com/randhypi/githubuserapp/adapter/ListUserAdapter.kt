@@ -2,6 +2,8 @@ package com.randhypi.githubuserapp.adapter
 
 
 
+import android.annotation.SuppressLint
+import android.content.ContentResolver
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,12 +11,16 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.randhypi.githubuserapp.R
-import com.randhypi.githubuserapp.model.User
 import com.randhypi.githubuserapp.databinding.ItemRowGithubBinding
+import com.randhypi.githubuserapp.model.User
 
 
 class ListUserAdapter(): RecyclerView.Adapter<ListUserAdapter.ListViewHolder>() {
 
+    companion object{
+         var TAG = ListUserAdapter::class.java.simpleName
+    }
+    private lateinit var contentResolver: ContentResolver
     private val mData = ArrayList<User>()
 
     fun setData(items: ArrayList<User>) {
@@ -27,7 +33,7 @@ class ListUserAdapter(): RecyclerView.Adapter<ListUserAdapter.ListViewHolder>() 
 
     interface OnItemClickCallback {
         fun onItemClicked(data: User)
-    }
+      }
 
     fun setOnItemClickCallback(onItemClickCallback: OnItemClickCallback) {
         this.onItemClickCallback = onItemClickCallback
@@ -48,6 +54,7 @@ class ListUserAdapter(): RecyclerView.Adapter<ListUserAdapter.ListViewHolder>() 
 
     inner class ListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
         private val binding = ItemRowGithubBinding.bind(itemView)
+        @SuppressLint("ShowToast")
         fun bind(userItem: User) {
             with(itemView){
                 binding.tvItemName.text = userItem.name

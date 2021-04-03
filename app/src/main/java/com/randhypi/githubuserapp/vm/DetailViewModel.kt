@@ -5,9 +5,9 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.randhypi.githubuserapp.model.User
 import com.loopj.android.http.AsyncHttpClient
 import com.loopj.android.http.AsyncHttpResponseHandler
+import com.randhypi.githubuserapp.model.User
 import cz.msebera.android.httpclient.Header
 import org.json.JSONArray
 import org.json.JSONObject
@@ -19,9 +19,18 @@ class DetailViewModel : ViewModel() {
 
     }
 
+    var stateStatusFav = MutableLiveData<Boolean>()
     val followingDetail = MutableLiveData<ArrayList<User>>()
     val followersDetail = MutableLiveData<ArrayList<User>>()
     val userDetail = MutableLiveData<ArrayList<User>>()
+
+    fun setStateStatusFav(state: Boolean){
+        stateStatusFav.postValue(state)
+    }
+
+    fun getStateStatusFav(): LiveData<Boolean>{
+        return stateStatusFav
+    }
 
     fun setFollowing(username: String) {
 

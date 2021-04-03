@@ -7,11 +7,12 @@ import android.content.UriMatcher
 import android.database.Cursor
 import android.net.Uri
 import android.util.Log
-import com.randhypi.githubuserapp.database.AppDatabase
-import com.randhypi.githubuserapp.database.UserDao
-import com.randhypi.githubuserapp.database.UserTable
-import com.randhypi.githubuserapp.database.UserTable.Companion.AUTHORITY
-import com.randhypi.githubuserapp.database.UserTable.Companion.TABLE_NAME
+import com.randhypi.githubuserapp.data.AppDatabase
+import com.randhypi.githubuserapp.data.UserDao
+import com.randhypi.githubuserapp.data.UserTable
+import com.randhypi.githubuserapp.data.UserTable.Companion.AUTHORITY
+import com.randhypi.githubuserapp.data.UserTable.Companion.CONTENT_URI
+import com.randhypi.githubuserapp.data.UserTable.Companion.TABLE_NAME
 
 
 class UserProvider : ContentProvider() {
@@ -68,8 +69,8 @@ class UserProvider : ContentProvider() {
                 if (context != null) {
                     val id: Long = userDao.insert(values?.let { UserTable.fromContentValues(it) })
                     if (id != 0L) {
-                        context!!.contentResolver.notifyChange(uri, null)
-                        return ContentUris.withAppendedId(uri, id)
+                        context!!.contentResolver.notifyChange(CONTENT_URI, null)
+                        return Uri.parse("$CONTENT_URI/$id")
                     }
                 }
                 throw java.lang.IllegalArgumentException("Invalid URI: Insert failed$uri")

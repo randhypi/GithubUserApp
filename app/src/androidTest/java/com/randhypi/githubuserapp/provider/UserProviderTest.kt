@@ -4,16 +4,17 @@ import android.content.ContentResolver
 import android.content.ContentValues
 import android.database.Cursor
 import android.net.Uri
+import android.util.Log
 import androidx.room.Room
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import com.randhypi.githubuserapp.database.AppDatabase
-import com.randhypi.githubuserapp.database.UserDao
-import com.randhypi.githubuserapp.database.UserTable.Companion.AUTHORITY
-import com.randhypi.githubuserapp.database.UserTable.Companion.AVATAR
-import com.randhypi.githubuserapp.database.UserTable.Companion.NAME
-import com.randhypi.githubuserapp.database.UserTable.Companion.TABLE_NAME
-import com.randhypi.githubuserapp.database.UserTable.Companion.USERNAME
+import com.randhypi.githubuserapp.data.AppDatabase
+import com.randhypi.githubuserapp.data.UserDao
+import com.randhypi.githubuserapp.data.UserTable.Companion.AUTHORITY
+import com.randhypi.githubuserapp.data.UserTable.Companion.AVATAR
+import com.randhypi.githubuserapp.data.UserTable.Companion.NAME
+import com.randhypi.githubuserapp.data.UserTable.Companion.TABLE_NAME
+import com.randhypi.githubuserapp.data.UserTable.Companion.USERNAME
 import junit.framework.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
@@ -54,6 +55,7 @@ class UserProviderTest{
             USER_URI, null, null,
             null, null
         )
+        Log.d(TAG,cursor.toString())
         assertNotNull(cursor)
 
         if (cursor?.moveToFirst() == true) {
@@ -68,10 +70,15 @@ class UserProviderTest{
         cursor?.close()
     }
 
+    @Test
+    fun delete() {
+        val count = contentResolver.delete(USER_URI_ID, null, null)
+        assertNotNull(count);
+    }
 
     private fun contentValues(): ContentValues {
         val contentValues: ContentValues = ContentValues()
-        contentValues.put(USERNAME, "randhypi")
+        contentValues.put(USERNAME, "randhypiP")
         contentValues.put(NAME, "randhy")
         contentValues.put(AVATAR, "randhy/randhy.jpg")
         return contentValues;
