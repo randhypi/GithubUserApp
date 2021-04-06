@@ -18,10 +18,15 @@
     <string name="notFollowing">Tidak Mempunyai Following</string>
     <string name="detail">Detail</string>
     <string name="nama">Nama</string>
+    <string name="setting">Setting</string>
     <string name="Back">back</string>
     <string name="image_view_splash_screen">Image View Splash Screen</string>
     <string name="search">search</string>
     <string name="favorit">Favorit</string>
+    <string name="key_alarm">alarm</string>
+    <string name="alarm_off">Matikan Alarm</string>
+    <string name="alarm_on">Hidupkan Alarm</string>
+    <string name="alarm_title">Alarm Pengingat</string>
 
 </resources>
 

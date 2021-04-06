@@ -14,10 +14,8 @@ class UserSourceData(private val contentResolver: ContentResolver) {
             CONTENT_URI, null, null,
             null, null
         )
-
         if (cursor?.moveToFirst() == true) {
             do {
-
                 val id: Int = cursor.getInt(cursor.getColumnIndex(UserTable.ID))
                 val username: String = cursor.getString(cursor.getColumnIndex(UserTable.USERNAME))
                 val name: String = cursor.getString(cursor.getColumnIndex(UserTable.NAME))

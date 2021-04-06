@@ -49,7 +49,6 @@ class MainViewModel : ViewModel() {
                     }
                     val response1 = response.body()
                     for (i in 0 until response1?.size!!) {
-
                             val name = response1?.get(i).login
                             val ava = response1?.get(i).avatarUrl
                             val user = User(name = name, avatar = ava)

@@ -17,8 +17,6 @@ class DatabaseViewModel(private val context: Application, private val userReposi
     val getUserFavorite: LiveData<ArrayList<User>> = liveData {
         emit(ArrayList<User>(userRepository.getUserFavorite()))
     }
-
-
 }
 
 class DatabaseViewModelFactory(private val application: Application): ViewModelProvider.AndroidViewModelFactory(application){

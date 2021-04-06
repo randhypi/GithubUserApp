@@ -7,19 +7,18 @@
         android:icon="@drawable/ic_search_24"
         android:title="@string/search"
         app:actionViewClass="androidx.appcompat.widget.SearchView"
+        android:iconifiedByDefault="false"
         app:showAsAction="collapseActionView|ifRoom" />
 
     <item
         android:id="@+id/favorite"
         android:icon="@drawable/ic_favorite_24"
         android:title="@string/favorit"
-        app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="collapseActionView|ifRoom" />
     <item
         android:id="@+id/settings"
         android:icon="@drawable/ic_settings"
         android:title="@string/search"
-        app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="collapseActionView|ifRoom" />
 
 </menu>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:iconSpaceReserved="false">
+
+
+    <SwitchPreference
+        android:defaultValue="false"
+        app:icon="@drawable/ic_notifications_24"
+        android:key="@string/key_alarm"
+        android:switchTextOff="@string/alarm_off"
+        android:switchTextOn="@string/alarm_on"
+        android:title="@string/alarm_title"
+        />
+
+</PreferenceScreen>

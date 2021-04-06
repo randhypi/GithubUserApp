@@ -37,7 +37,7 @@ class DetailViewModel : ViewModel() {
         val followingsUser = ArrayList<User>()
 
         val asyncClient = AsyncHttpClient()
-        asyncClient.addHeader("Authorization", "fecdd17f1dd5ed66cf5d9e60e4e3a047d72d45dd")
+        asyncClient.addHeader("Authorization", "token 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")
         asyncClient.addHeader("User-Agent", "request")
 
         asyncClient.get(
@@ -87,7 +87,7 @@ class DetailViewModel : ViewModel() {
         val followersUser = ArrayList<User>()
 
         val asyncClient = AsyncHttpClient()
-        asyncClient.addHeader("Authorization", "fecdd17f1dd5ed66cf5d9e60e4e3a047d72d45dd")
+        asyncClient.addHeader("Authorization", "token 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")
         asyncClient.addHeader("User-Agent", "request")
 
         asyncClient.get(
@@ -136,7 +136,7 @@ class DetailViewModel : ViewModel() {
     fun setUserDetail(username: String) {
         val detailUser = ArrayList<User>()
         val asyncClient = AsyncHttpClient()
-        asyncClient.addHeader("Authorization", "fecdd17f1dd5ed66cf5d9e60e4e3a047d72d45dd")
+        asyncClient.addHeader("Authorization", "token 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")
         asyncClient.addHeader("User-Agent", "request")
         asyncClient.get(
             "https://api.github.com/users/$username",

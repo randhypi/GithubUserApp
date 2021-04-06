@@ -7,6 +7,7 @@ import android.content.UriMatcher
 import android.database.Cursor
 import android.net.Uri
 import android.util.Log
+import androidx.lifecycle.LifecycleOwner
 import com.randhypi.githubuserapp.data.AppDatabase
 import com.randhypi.githubuserapp.data.UserDao
 import com.randhypi.githubuserapp.data.UserTable
@@ -32,11 +33,12 @@ class UserProvider : ContentProvider() {
         }
     }
 
+    lateinit var lifecycleOwner: LifecycleOwner
 
 
 
     override fun onCreate(): Boolean {
-        userDao = context?.let { AppDatabase?.getInstance(it)?.getUserDao() }!!
+        userDao = context?.let { AppDatabase.getInstance(it).getUserDao() }!!
         return true;
     }
 
@@ -49,7 +51,7 @@ class UserProvider : ContentProvider() {
         val cursor: Cursor
         when (sUriMatcher.match(uri)) {
             USER -> {
-                cursor = userDao.getAll()
+        cursor =   userDao.getAll()
                 if (context != null) {
                     cursor.setNotificationUri(
                         context?.getContentResolver(), uri

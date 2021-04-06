@@ -1,6 +1,7 @@
 package com.randhypi.githubuserapp.ui
 
 
+import android.annotation.SuppressLint
 import android.content.ContentResolver
 import android.graphics.Color
 import android.net.Uri
@@ -14,10 +15,9 @@ import androidx.activity.OnBackPressedCallback
 import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.google.android.material.tabs.TabLayout
@@ -32,7 +32,6 @@ import com.randhypi.githubuserapp.repository.UserRepository
 import com.randhypi.githubuserapp.vm.DatabaseViewModel
 import com.randhypi.githubuserapp.vm.DatabaseViewModelFactory
 import com.randhypi.githubuserapp.vm.DetailViewModel
-import com.randhypi.githubuserapp.vm.MainViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -41,10 +40,9 @@ class DetailFragment : Fragment() {
 
     private var _binding: DetailFragmentBinding? = null
     private val binding get() = _binding!!
-    private val detailViewModel: DetailViewModel by activityViewModels()
+    private lateinit var detailViewModel: DetailViewModel
     private lateinit var contentResolver: ContentResolver
     private lateinit var viewModelFactory: DatabaseViewModelFactory
-    private lateinit var mainViewModel: MainViewModel
     private lateinit var uriWithId: Uri
     private var statusfavorite: Boolean = false
 
@@ -73,15 +71,24 @@ class DetailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         showLoading(true)
 
+        val navController = findNavController()
+
+
         activity?.onBackPressedDispatcher?.addCallback(requireActivity(),
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    view.findNavController().navigate(R.id.action_detailFragment_to_homeFragment)
+                    if (navController.currentDestination?.id == R.id.action_favoriteFragment_to_detailFragment ){
+                        navController.popBackStack()
+                    }else  {
+                        navController.popBackStack()
+                    }
+
+                   // view.findNavController().navigate(R.id.action_detailFragment_to_homeFragment)
                 }
             })
         binding.myToolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_ios_new_24)
         binding.myToolbar.setNavigationOnClickListener {
-            view.findNavController().navigate(R.id.action_detailFragment_to_homeFragment)
+            navController.popBackStack()
         }
 
         val dataName = DetailFragmentArgs.fromBundle(arguments as Bundle).name
@@ -114,6 +121,7 @@ class DetailFragment : Fragment() {
     }
 
     private fun showData(username: String) {
+        detailViewModel = DetailViewModel()
         detailViewModel.setUserDetail(username)
         detailViewModel.getUserDetail().observe(viewLifecycleOwner, { item ->
 
@@ -153,6 +161,7 @@ class DetailFragment : Fragment() {
         })
     }
 
+    @SuppressLint("ResourceAsColor")
     private fun btnFav(user: User) {
         viewModelFactory = DatabaseViewModelFactory(activity?.application!!)
         val viewModel = ViewModelProvider(this, viewModelFactory).get(DatabaseViewModel::class.java)
@@ -161,40 +170,48 @@ class DetailFragment : Fragment() {
                 lifecycleScope.launch {
                     if (statusfavorite == true) {
                         withContext(Dispatchers.Main) {
-                            binding.btnFav.setImageResource(R.drawable.ic_favorite_24)
-                            binding.btnFav.setOnClickListener {
-                                val result = favorite.find {
-                                    it.username == user.username
+                            try{
+                                binding.btnFav.setImageResource(R.drawable.ic_favorite_24)
+                                binding.btnFav.setOnClickListener {
+                                    val result = favorite.find {
+                                        it.username == user.username
+                                    }
+                                    if (result != null) {
+                                        uriWithId =
+                                            Uri.parse(CONTENT_URI.toString() + "/" + result.id)
+                                        contentResolver = context?.contentResolver!!
+                                        UserRepository.delUserFav(contentResolver, uriWithId)
+                                        detailViewModel.setStateStatusFav(false)
+                                        Toast.makeText(context,"${result.name} is now deteled",Toast.LENGTH_SHORT).show()
+                                        Log.d(
+                                            TAG,
+                                            "button clicked and $statusfavorite delete in id = $result.id"
+                                        )
+                                    }
                                 }
-                                if (result != null) {
-                                    uriWithId =
-                                        Uri.parse(CONTENT_URI.toString() + "/" + favorite[0].id)
-                                    contentResolver = context?.contentResolver!!
-                                    UserRepository.delUserFav(contentResolver, uriWithId)
-                                }
-
-                                Log.d(
-                                    TAG,
-                                    "button clicked and $statusfavorite delete in id = ${favorite[0].id}"
-                                )
-                                detailViewModel.setStateStatusFav(false)
+                                Log.d(TAG, "and now  status is $statusfavorite and id =  ")
+                            }catch (e: IndexOutOfBoundsException){
+                                    Log.d(TAG,e.toString())
 
                             }
+
                         }
                     } else if (statusfavorite == false) {
                         withContext(Dispatchers.Main) {
                             binding.btnFav.setImageResource(com.randhypi.githubuserapp.R.drawable.ic_favorite_border_24)
+                            binding.btnFav.drawable.mutate().setTint(R.color.primaryTextColor)
                             binding.btnFav.setOnClickListener {
                                 contentResolver = context?.contentResolver!!
-                                UserRepository.insertUserFav(
-                                    user,
-                                    requireContext(),
-                                    contentResolver
-                                )
-                                detailViewModel.setStateStatusFav(true)
+                                    UserRepository.insertUserFav(
+                                        user,
+                                        requireContext(),
+                                        contentResolver
+                                    )
+                                    Toast.makeText(context,"${user.username} is now favorite",Toast.LENGTH_SHORT).show()
+                                    detailViewModel.setStateStatusFav(true)
                                 Log.d(TAG, "button clicked and $statusfavorite insert ")
-
                             }
+                            Log.d(TAG, "and now  status is $statusfavorite")
                         }
                     }
                 }

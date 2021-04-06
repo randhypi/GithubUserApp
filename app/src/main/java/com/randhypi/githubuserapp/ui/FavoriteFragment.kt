@@ -13,6 +13,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.randhypi.githubuserapp.R
 import com.randhypi.githubuserapp.adapter.FavoriteAdapter
@@ -48,10 +49,30 @@ class FavoriteFragment : Fragment() {
 
 
 
+       loadData()
+
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        loadData()
+    }
+
+    private fun loadData(){
+        val navController = findNavController()
         binding.myToolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_ios_new_24)
         binding.myToolbar.setNavigationOnClickListener {
-            view.findNavController().navigate(R.id.action_favoriteFragment_to_homeFragment)
+            navController.popBackStack()
         }
+        activity?.onBackPressedDispatcher?.addCallback(requireActivity(),
+            object : OnBackPressedCallback(
+                true
+            ) {
+                override fun handleOnBackPressed() {
+                    navController.navigateUp()
+                }
+            })
 
         binding.recyclerView.layoutManager = LinearLayoutManager(context)
         binding.recyclerView.setHasFixedSize(true)
@@ -60,9 +81,10 @@ class FavoriteFragment : Fragment() {
         binding.recyclerView.adapter = adapter
 
         viewModelFactory = DatabaseViewModelFactory(activity?.application!!)
+
         val viewModel = ViewModelProvider(this, viewModelFactory).get(DatabaseViewModel::class.java)
         viewModel.getUserFavorite.observe(viewLifecycleOwner, {
-            Log.d(TAG, "ada")
+            Log.d(TAG, "ada $it")
             adapter.setData(it)
         })
 
@@ -71,16 +93,6 @@ class FavoriteFragment : Fragment() {
                 view?.let { showSelectedUser(data, it) }
             }
         })
-
-        activity?.onBackPressedDispatcher?.addCallback(requireActivity(),
-            object : OnBackPressedCallback(
-                true
-            ) {
-                override fun handleOnBackPressed() {
-                    view.findNavController().navigate(R.id.action_favoriteFragment_to_homeFragment)
-                }
-            })
-
 
     }
 
