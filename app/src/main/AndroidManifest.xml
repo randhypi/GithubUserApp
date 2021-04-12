@@ -22,12 +22,12 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
         <receiver
-            android:name=".service.AlarmReceiver"
+            android:name="com.randhypi.githubuserapp.service.AlarmReceiver"
             android:enabled="true"
             android:exported="true"></receiver>
 
         <provider
-            android:name=".provider.UserProvider"
+            android:name="com.randhypi.githubuserapp.provider.UserProvider"
             android:authorities="com.randhypi.githubuserapp"
             android:enabled="true"
             android:exported="true"
@@ -35,7 +35,7 @@
             android:writePermission="com.randhypi.githubuserapp.WRITE_DATABASE" />
 
         <activity
-            android:name=".ui.SplashActivity"
+            android:name="com.randhypi.githubuserapp.ui.SplashActivity"
             tools:ignore="ExtraText">
             android:theme="@android:style/Theme.NoTitleBar">
             <intent-filter>
@@ -44,7 +44,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.MainActivity" />
+        <activity android:name="com.randhypi.githubuserapp.ui.MainActivity" />
     </application>
 
 </manifest>

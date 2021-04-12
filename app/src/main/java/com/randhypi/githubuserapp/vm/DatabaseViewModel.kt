@@ -10,21 +10,23 @@ import com.randhypi.githubuserapp.model.User
 import com.randhypi.githubuserapp.repository.UserRepository
 import kotlinx.coroutines.Dispatchers
 
+
 class DatabaseViewModel(private val context: Application, private val userRepository: UserRepository) :
     ViewModel() {
 
+        val userFavorite: LiveData<ArrayList<User>> = liveData{
+          emit(ArrayList(userRepository.getUserFavorite().toList()))
+        }
 
-    val getUserFavorite: LiveData<ArrayList<User>> = liveData {
-        emit(ArrayList<User>(userRepository.getUserFavorite()))
-    }
+
 }
 
 class DatabaseViewModelFactory(private val application: Application): ViewModelProvider.AndroidViewModelFactory(application){
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         return if (modelClass.isAssignableFrom(DatabaseViewModel::class.java)) {
             val source =
-                UserSourceData(application.contentResolver)
-            DatabaseViewModel(application, UserRepository(source, Dispatchers.IO)) as T
+                UserSourceData(application.contentResolver,application.applicationContext)
+            DatabaseViewModel(application, UserRepository(source, Dispatchers.IO,application.contentResolver,application.applicationContext)) as T
         } else
             throw IllegalArgumentException("Unknown ViewModel class")
     }

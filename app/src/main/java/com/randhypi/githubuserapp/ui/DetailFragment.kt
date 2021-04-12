@@ -77,13 +77,13 @@ class DetailFragment : Fragment() {
         activity?.onBackPressedDispatcher?.addCallback(requireActivity(),
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    if (navController.currentDestination?.id == R.id.action_favoriteFragment_to_detailFragment ){
+                    if (navController.currentDestination?.id == R.id.action_favoriteFragment_to_detailFragment) {
                         navController.popBackStack()
-                    }else  {
+                    } else {
                         navController.popBackStack()
                     }
 
-                   // view.findNavController().navigate(R.id.action_detailFragment_to_homeFragment)
+                    // view.findNavController().navigate(R.id.action_detailFragment_to_homeFragment)
                 }
             })
         binding.myToolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_ios_new_24)
@@ -114,8 +114,6 @@ class DetailFragment : Fragment() {
             tab.text = resources.getString((TAB_TITLES[position]))
         }.attach()
 
-
-
         activity?.actionBar?.setDisplayHomeAsUpEnabled(true)
         activity?.actionBar?.title = getString(detail)
     }
@@ -130,7 +128,7 @@ class DetailFragment : Fragment() {
                 Glide.with(requireContext())
                     .load(item[0].avatar)
                     .into(binding.imgDetail)
-
+                //btnInser(item[0])
                 btnFav(item[0])
                 binding.tvNameDetail.text = item[0].name
                 binding.tvUsernameDetail.text = item[0].username
@@ -145,7 +143,7 @@ class DetailFragment : Fragment() {
     private fun setStatusFavorite(dataName: String) {
         viewModelFactory = DatabaseViewModelFactory(activity?.application!!)
         val viewModel = ViewModelProvider(this, viewModelFactory).get(DatabaseViewModel::class.java)
-        viewModel.getUserFavorite.observe(viewLifecycleOwner, { favorite ->
+        viewModel.userFavorite.observe(viewLifecycleOwner, { favorite ->
             val result = favorite.find {
                 it.username == dataName
             }
@@ -161,16 +159,30 @@ class DetailFragment : Fragment() {
         })
     }
 
+    private fun btnInser(user: User) {
+        binding.btnFav.setOnClickListener {
+            contentResolver = context?.contentResolver!!
+            UserRepository.insertUserFav(
+                user,
+                requireContext(),
+                contentResolver
+            )
+            Toast.makeText(context, "${user.username} is now favorite", Toast.LENGTH_SHORT).show()
+            detailViewModel.setStateStatusFav(true)
+            Log.d(TAG, "button clicked and $statusfavorite insert ")
+        }
+    }
+
     @SuppressLint("ResourceAsColor")
     private fun btnFav(user: User) {
         viewModelFactory = DatabaseViewModelFactory(activity?.application!!)
         val viewModel = ViewModelProvider(this, viewModelFactory).get(DatabaseViewModel::class.java)
-        detailViewModel.stateStatusFav.observe(viewLifecycleOwner, { statusfavorite ->
-            viewModel.getUserFavorite.observe(viewLifecycleOwner, { favorite ->
+        detailViewModel.getStateStatusFav().observe(viewLifecycleOwner, { statusfavorite ->
+            viewModel.userFavorite.observe(viewLifecycleOwner, { favorite ->
                 lifecycleScope.launch {
                     if (statusfavorite == true) {
                         withContext(Dispatchers.Main) {
-                            try{
+                            try {
                                 binding.btnFav.setImageResource(R.drawable.ic_favorite_24)
                                 binding.btnFav.setOnClickListener {
                                     val result = favorite.find {
@@ -182,7 +194,11 @@ class DetailFragment : Fragment() {
                                         contentResolver = context?.contentResolver!!
                                         UserRepository.delUserFav(contentResolver, uriWithId)
                                         detailViewModel.setStateStatusFav(false)
-                                        Toast.makeText(context,"${result.name} is now deteled",Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(
+                                            context,
+                                            "${result.name} is now deteled",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
                                         Log.d(
                                             TAG,
                                             "button clicked and $statusfavorite delete in id = $result.id"
@@ -190,8 +206,8 @@ class DetailFragment : Fragment() {
                                     }
                                 }
                                 Log.d(TAG, "and now  status is $statusfavorite and id =  ")
-                            }catch (e: IndexOutOfBoundsException){
-                                    Log.d(TAG,e.toString())
+                            } catch (e: IndexOutOfBoundsException) {
+                                Log.d(TAG, e.toString())
 
                             }
 
@@ -202,13 +218,17 @@ class DetailFragment : Fragment() {
                             binding.btnFav.drawable.mutate().setTint(R.color.primaryTextColor)
                             binding.btnFav.setOnClickListener {
                                 contentResolver = context?.contentResolver!!
-                                    UserRepository.insertUserFav(
-                                        user,
-                                        requireContext(),
-                                        contentResolver
-                                    )
-                                    Toast.makeText(context,"${user.username} is now favorite",Toast.LENGTH_SHORT).show()
-                                    detailViewModel.setStateStatusFav(true)
+                                UserRepository.insertUserFav(
+                                    user,
+                                    requireContext(),
+                                    contentResolver
+                                )
+                                Toast.makeText(
+                                    context,
+                                    "${user.username} is now favorite",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                detailViewModel.setStateStatusFav(true)
                                 Log.d(TAG, "button clicked and $statusfavorite insert ")
                             }
                             Log.d(TAG, "and now  status is $statusfavorite")
@@ -219,7 +239,6 @@ class DetailFragment : Fragment() {
         })
     }
 
-
     //    Menampilkan loading
     private fun showLoading(state: Boolean) {
         if (state) {
@@ -228,7 +247,6 @@ class DetailFragment : Fragment() {
             binding.progressBar.visibility = View.GONE
         }
     }
-
 
     override fun onDestroy() {
         super.onDestroy()

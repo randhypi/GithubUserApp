@@ -14,7 +14,9 @@ import kotlinx.coroutines.withContext
 
 class  UserRepository(
     private val source: UserSourceData,
-    private val myDispathcer: CoroutineDispatcher
+    private val myDispathcer: CoroutineDispatcher,
+    private val contentResolver: ContentResolver,
+    private val context: Context
 ) {
 
     companion object {
@@ -37,9 +39,10 @@ class  UserRepository(
         }
     }
 
-   suspend fun getUserFavorite(): List<User>{
+
+    suspend fun getUserFavorite(): List<User>{
         return withContext(myDispathcer) {
-             source.getUser()
+             UserSourceData(contentResolver,context).getContentProviderValue()
         }
     }
 

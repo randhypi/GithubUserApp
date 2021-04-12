@@ -83,7 +83,7 @@ class FavoriteFragment : Fragment() {
         viewModelFactory = DatabaseViewModelFactory(activity?.application!!)
 
         val viewModel = ViewModelProvider(this, viewModelFactory).get(DatabaseViewModel::class.java)
-        viewModel.getUserFavorite.observe(viewLifecycleOwner, {
+        viewModel.userFavorite.observe(viewLifecycleOwner, {
             Log.d(TAG, "ada $it")
             adapter.setData(it)
         })

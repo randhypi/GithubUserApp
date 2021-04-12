@@ -51,7 +51,9 @@ class UserProvider : ContentProvider() {
         val cursor: Cursor
         when (sUriMatcher.match(uri)) {
             USER -> {
-        cursor =   userDao.getAll()
+
+           cursor = userDao.getAll()
+
                 if (context != null) {
                     cursor.setNotificationUri(
                         context?.getContentResolver(), uri
