@@ -1,6 +1,5 @@
 package com.randhypi.githubuserapp.ui
 
-
 import android.app.SearchManager
 import android.content.Context
 import android.os.Bundle
@@ -162,6 +161,8 @@ class HomeFragment : Fragment() {
 
     private fun showSelectedUser(user: User, view: View) {
         Toast.makeText(context, "Kamu memilih ${user.name}", Toast.LENGTH_SHORT).show()
+
+
 
         val toDetail = HomeFragmentDirections.actionHomeFragmentToDetailFragment()
         toDetail.name = user.name
